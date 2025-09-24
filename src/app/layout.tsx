@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Sidebar from "@/components/Sidebar";
 import "./globals.css";
 
 export default function RootLayout({
@@ -9,7 +10,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body className=" flex">
+        <aside className="">
+          <Sidebar></Sidebar>
+        </aside>
+
+        <main className="bg-black w-screen">{children}</main>
+      </body>
     </html>
   );
 }
