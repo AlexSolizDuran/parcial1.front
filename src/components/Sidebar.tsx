@@ -7,7 +7,7 @@ import Link from "next/link";
 
 export default function Sidebar() {
   const [open, setOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+  
   const menuItems = [
     { name: "Inicio", icon: <Home size={20} />, href: "/" },
     { name: "Perfil", icon: <User size={20} />, href: "/perfil" },
@@ -47,17 +47,10 @@ export default function Sidebar() {
       href: "/configuracion",
     },
   ];
-  useEffect(()=> {
-    const handleResize = () => setIsMobile(window.innerWidth < 768);
-    handleResize();
-    window.addEventListener('resize',handleResize);
-    return () => window.removeEventListener('resize',handleResize)
-  })
+  
 
   return (
     <div className="flex">
-      {/* Botón hamburguesa para móviles */}
-      {/* Botón hamburguesa móvil */}
       <button
         onClick={() => setOpen(true)}
         className="p-2 md:hidden fixed top-4 left-4 z-50 bg-gray-800 text-white rounded-lg"
@@ -92,7 +85,7 @@ export default function Sidebar() {
       )}
 
       {/* Sidebar desktop */}
-      <aside className="hidden md:flex md:w-64 h-screen bg-blue-400 overflow-auto relative">
+      <aside className="hidden md:flex md:flex-col md:w-64 h-screen bg-green-400 overflow-auto relative">
         <div className="p-4 border-b border-gray-700 font-bold text-xl">Mi App</div>
         <nav className="p-4 space-y-2">
           {menuItems.map((item, i) => (
