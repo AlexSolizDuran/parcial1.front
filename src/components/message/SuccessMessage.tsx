@@ -1,8 +1,10 @@
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+interface Props{
+  table:string
+}
 
-
-function SuccessMessage() {
+function SuccessMessage({table}:Props) {
   const searchParams = useSearchParams();
   const isCreated = searchParams.get("created") === "true";
   const isDeleted = searchParams.get("deleted") === "true";
@@ -11,7 +13,7 @@ function SuccessMessage() {
 
   useEffect(() => {
     if (isCreated || isDeleted) {
-      setMessage(isCreated ? "La persona ha sido creada correctamente." : "La persona ha sido eliminada correctamente.");
+      setMessage(isCreated ? `${table} creado correctamente.` :`${table} eliminado correctamente.`);
       setShowSuccess(true);
       const timer = setTimeout(() => {
         setShowSuccess(false);
@@ -21,7 +23,7 @@ function SuccessMessage() {
       return () => clearTimeout(timer);
     }
   }, [isCreated, isDeleted]);
-
+  
   if (!showSuccess) {
     return null;
   }

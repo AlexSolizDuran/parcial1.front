@@ -1,12 +1,12 @@
 "use client";
-import React, { useState,use } from "react";
+import React, { useState, use } from "react";
 import { useRouter } from "next/navigation";
 
 import useSWR, { mutate } from "swr";
 import { apiFetcher } from "@/fetcher"; // Asegúrate que este fetcher exista y funcione
-import { Persona } from "@/types/usuarios";
-import Link from "next/link";
-
+import { Persona } from "@/types/usuarios/usuarios";
+import Button2 from "@/components/buttons/Button2";
+import ButtonDelete from "@/components/buttons/ButtonDelete";
 // Iconos para la información
 const IdCardIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 012-2h2a2 2 0 012 2v1m-4 0h4" /></svg>;
 const PhoneIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>;
@@ -19,7 +19,7 @@ const DeleteIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-4 
 export default function PersonaDetail({ params }: { params: Promise<{ id: string }> }) {
   const url = process.env.NEXT_PUBLIC_API_URL;
   const router = useRouter();
-  const { id } = use(params); 
+  const { id } = use(params);
   const personaUrl = `${url}/usuario/personas/${id}/`;
   const listUrl = `${url}/usuario/personas/`;
 
@@ -64,7 +64,7 @@ export default function PersonaDetail({ params }: { params: Promise<{ id: string
           {persona.foto ? (
             <img src={persona.foto} alt={`Foto de ${persona.nombre}`} className="w-full h-full rounded-full object-cover" />
           ) : (
-            <span className="text-4xl font-bold text-white">{persona.nombre.charAt(0).toUpperCase()}</span>
+            <span className="text-4xl font-bold text-white">{persona.nombre?.charAt(0).toUpperCase()}</span>
           )}
         </div>
 
@@ -75,21 +75,16 @@ export default function PersonaDetail({ params }: { params: Promise<{ id: string
         </div>
         {/* Botones de Acción */}
         <div className="flex items-center gap-2">
-          <Link
-            href={`/admin/usuarios/otros/${persona.id}/editar`}
-            className="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors"
+          <Button2
+            href={`/admin/usuarios/otros/${persona.id}/editar`} size="md" variant="update"
           >
             <EditIcon /> Editar
-          </Link>
-          <button
-            onClick={handleDelete}
-            disabled={isDeleting}
-            className="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isDeleting ? 'Eliminando...' : (
-              <><DeleteIcon /> Eliminar</>
-            )}
-          </button>
+          </Button2>
+          <ButtonDelete
+            onDelete={handleDelete} // tu función que hace el DELETE
+            icon={<DeleteIcon />}
+            label="Eliminar"
+          />
         </div>
       </div>
 

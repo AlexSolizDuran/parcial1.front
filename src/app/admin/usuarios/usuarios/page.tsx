@@ -1,41 +1,25 @@
 "use client";
 import useSWR from "swr";
-import { Usuario } from "@/types/usuarios";
+import { Usuario } from "@/types/usuarios/usuarios";
 import CardUser from "@/components/cards/CardUser";
 import { apiFetcher } from "@/fetcher";
+import { useState } from "react";
+import { Suspense } from "react";
+import SuccessMessage from "@/components/message/SuccessMessage";
+interface PaginatedResponse<Usuario> {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: Usuario[];
+}
 
-// fetcher para SWR
-
-/*const fetcher = async (url: string) => {
-  const token = localStorage.getItem("token");
-  if (!token) throw new Error("No hay token guardado, inicia sesión");
-
-  const res = await fetch(url, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  // si no es 200 → lanzo error con info
-  if (!res.ok) {
-    let errorMsg = `Error ${res.status}`;
-    try {
-      const errData = await res.json();
-      errorMsg = errData.detail || errorMsg;
-    } catch {
-      // si no es JSON, no pasa nada
-    }
-    throw new Error(errorMsg);
-  }
-
-  return res.json();
-};*/
 
 export default function ListaUsuarios() {
   const url = process.env.NEXT_PUBLIC_API_URL;
+  const [page, setPage] = useState(1)
 
-  const { data, error, isLoading } = useSWR<Usuario[]>(
-    `${url}/usuario/usuarios/`,
+  const { data, error, isLoading } = useSWR<PaginatedResponse<Usuario>>(
+    `${url}/usuario/usuarios/?page=${page}`,
     apiFetcher
   );
 
@@ -46,35 +30,50 @@ export default function ListaUsuarios() {
       </div>
     );
   }
-
   if (isLoading) return <div className="p-4">Cargando usuarios...</div>;
-
   return (
-    <div className="p-4 sm:p-6 md:p-8">
+    <div>
+      {/*AVISO DE CREADO, */}
+      <Suspense fallback={<div>Cargando...</div>}>
+        <SuccessMessage table="Persona" />
+      </Suspense>
+
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-blue-900 ">
-          Gestión de Usuarios
-        </h1>
-        <button className="px-4 py-2 text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 rounded-md shadow-sm">
-          + Añadir Usuario
-        </button>
+        <h1 className="text-2xl font-bold text-blue-900">Gestión de Usuarios</h1>
+        {/*BOTON PARA AÑADIR MAS PERSONAS */}
+
       </div>
+      {/*AQUI ESTA LA CARD PARA PONER LOS DATOS */}
       <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-6">
-        {data?.map((usuario) => (
-          <CardUser
-            key={usuario.id}
-            usuario={usuario}
-            
-          />
+        {data?.results.map((usuario) => (
+          <CardUser key={usuario.id} usuario={usuario} />
         ))}
       </div>
-      {data?.length === 0 && (
-        <div className="text-center py-10 bg-white dark:bg-gray-800 rounded-lg shadow">
-          <p className="text-gray-500 dark:text-gray-400">
-            No se encontraron usuarios registrados.
-          </p>
+
+      {!isLoading && data?.results.length === 0 && (
+        <div className="text-center py-10 bg-white rounded-lg shadow">
+          <p className="text-gray-500">No se encontraron Usuarios registrados.</p>
         </div>
       )}
+
+      {/* Paginación */}
+      <div className="flex justify-center mt-6 gap-2">
+        <button
+          onClick={() => setPage((p) => Math.max(p - 1, 1))}
+          disabled={!data?.previous}
+          className="px-3 py-1 border rounded disabled:opacity-50"
+        >
+          Anterior
+        </button>
+        <span className="px-3 py-1 border rounded bg-gray-100">{page}</span>
+        <button
+          onClick={() => setPage((p) => p + 1)}
+          disabled={!data?.next}
+          className="px-3 py-1 border rounded disabled:opacity-50"
+        >
+          Siguiente
+        </button>
+      </div>
     </div>
   );
 }

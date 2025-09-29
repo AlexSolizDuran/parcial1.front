@@ -2,12 +2,19 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { User } from "@/types/user"
-
+import { User } from "@/types/usuarios/user"
+import {
+  Home as HomeIcon,
+  User as UserIcon,
+  Users as UsersIcon,
+  FileText as FileTextIcon,
+  CreditCard as CreditCardIcon,
+  Bell as BellIcon,
+  Calendar as CalendarIcon,
+  Settings as SettingsIcon,
+} from "lucide-react";
 // Iconos de ejemplo (puedes usar react-icons, heroicons, etc.)
-const HomeIcon = () => <span>🏠</span>;
-const ProfileIcon = () => <span>👤</span>;
-const SettingsIcon = () => <span>⚙️</span>;
+
 // Cambiado a un ícono de flecha SVG para un look más moderno
 const MenuIcon = () => (
   <svg
@@ -40,28 +47,22 @@ export default function Sidebar({ variant = "admin" }: SidebarProps) {
     router.push("/");
   };
   const adminItems = [
-    { name: "Inicio", href: "/admin", icon: <SettingsIcon /> },
-    { name: "Usuarios", href: "/admin/usuarios", icon: <ProfileIcon /> },
-    { name: "Residencias", href: "/admin/residencias", icon: <HomeIcon /> },
-    { name: "Activos y Reservas", href: "/admin/activos_reservas", icon: <SettingsIcon /> },
-    { name: "Incidencias", href: "/admin/incidencia", icon: <SettingsIcon /> },
-    { name: "Facturación y Cobros", href: "/admin/factura_cobro", icon: <SettingsIcon /> },
+    { name: "Inicio", href: "/admin", icon: <HomeIcon /> },
+    { name: "Usuarios", href: "/admin/usuarios/usuarios", icon: <UsersIcon /> }, // varios usuarios
+    { name: "Residencias", href: "/admin/residencias/viviendas", icon: <HomeIcon /> },
+    { name: "Activos y Reservas", href: "/admin/activos_reservas", icon: <CalendarIcon /> }, // calendario o reservas
+    { name: "Incidencias", href: "/admin/incidencia", icon: <BellIcon /> }, // alertas/incidencias
+    { name: "Facturación y Cobros", href: "/admin/factura_cobro", icon: <CreditCardIcon /> },
   ];
-
-  const propietarioItems = [
-    { name: "Inicio", href: "/propietario", icon: <HomeIcon /> },
-    { name: "Residencia", href: "/propietario/residencia", icon: <ProfileIcon /> },
-    { name: "Pagos", href: "/propietario/pagos", icon: <SettingsIcon /> },
-    { name: "Cobros", href: "/propietario/cobros", icon: <SettingsIcon /> },
-    
-  ];
+ 
+  
   useEffect(() => {
     const storedUser = localStorage.getItem("user")
     if (storedUser) {
       setUser(JSON.parse(storedUser))
     }
   }, [])
-  const menuItems = variant === "admin" ? adminItems : propietarioItems;
+  const menuItems = adminItems
 
   return (
     <>

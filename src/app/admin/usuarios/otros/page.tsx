@@ -3,48 +3,49 @@
 import { Suspense, useState } from "react";
 import SuccessMessage from "@/components/message/SuccessMessage";
 import useSWR from "swr";
-import { Persona } from "@/types/usuarios";
+import { Persona } from "@/types/usuarios/usuarios";
 import { apiFetcher } from "@/fetcher";
 import CardPersona from "@/components/cards/CardPersona";
-import Button1 from "@/components/buttons/Button1";
-
-interface PaginatedResponse<T> {
+import Button2 from "@/components/buttons/Button2";
+interface PaginatedResponse<Persona> {
   count: number;
   next: string | null;
   previous: string | null;
-  results: T[];
+  results: Persona[];
 }
 
 export default function PersonasListView() {
-  const url = process.env.NEXT_PUBLIC_API_URL + "/usuario/personas/";
+  const url = process.env.NEXT_PUBLIC_API_URL;
   const [page, setPage] = useState(1);
 
   const { data, error, isLoading } = useSWR<PaginatedResponse<Persona>>(
-    `${url}?page=${page}`,
+    `${url}/usuario/personas/?page=${page}`,
     apiFetcher
   );
+  if (error) {
+    return (
+      <div className="p-4 text-red-500">
+        Error al cargar usuarios: {error.message}
+      </div>
+    );
+  }
 
+  if (isLoading) return <div className="p-4">Cargando usuarios...</div>;
   return (
     <div>
+      {/*AVISO DE CREADO, */}
       <Suspense fallback={<div>Cargando...</div>}>
-        <SuccessMessage />
+        <SuccessMessage table="Persona" />
       </Suspense>
 
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">Gestión de Personas</h1>
-        <Button1 href="/admin/usuarios/otros/crear" size="md" variant="primary">
-          + Añadir Persona
-        </Button1>
+        <h1 className="text-2xl font-bold text-blue-900">Gestión de Personas</h1>
+        {/*BOTON PARA AÑADIR MAS PERSONAS */}
+        <Button2 href="/admin/usuarios/otros/crear" size="md" variant="create">
+          Añadir
+        </Button2>
       </div>
-
-      {error && (
-        <div className="p-4 text-red-500 bg-red-50 rounded-md">
-          Error al cargar las personas: {error.message}
-        </div>
-      )}
-
-      {isLoading && <div className="p-4">Cargando personas...</div>}
-
+      {/*AQUI ESTA LA CARD PARA PONER LOS DATOS */}
       <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-6">
         {data?.results.map((persona) => (
           <CardPersona key={persona.id} persona={persona} />

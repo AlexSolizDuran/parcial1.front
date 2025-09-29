@@ -1,6 +1,6 @@
 "use client";
 import useSWR from "swr";
-import { Usuario } from "@/types/usuarios";
+import { Usuario } from "@/types/usuarios/usuarios";
 import CardUser from "@/components/cards/CardUser";
 
 // fetcher para SWR

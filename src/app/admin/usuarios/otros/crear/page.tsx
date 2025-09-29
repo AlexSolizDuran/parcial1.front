@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { mutate } from "swr";
 import { apiFetcher } from "@/fetcher";
-import { PersonaSet } from "@/types/usuarios";
+import { Persona } from "@/types/usuarios/usuarios";
 import { useRouter } from "next/navigation";
 import FormInput from "@/components/input/FormInput";
 import FormSelect from "@/components/input/FormSelect";
@@ -12,7 +12,7 @@ export default function PersonaCreateView() {
   const router = useRouter();
   const url = process.env.NEXT_PUBLIC_API_URL + "/usuario/personas/";
 
-  const [formData, setFormData] = useState<PersonaSet>({
+  const [formData, setFormData] = useState<Persona>({
     nombre: "",
     apellido: "",
     ci: "",

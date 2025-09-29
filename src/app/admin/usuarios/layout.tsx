@@ -12,7 +12,7 @@ export default function RootLayout({
   return (
     <div>
       
-      <div className="flex flex-wrap items-center gap-2 p-4 bg-white border-b border-gray-200 shadow-sm">
+      <div className="flex flex-wrap md:justify-center justify-start items-center gap-2 p-4 bg-white border-b border-gray-200 shadow-sm">
         <Button1
           href="/admin/usuarios/usuarios"
           size="sm"
@@ -39,7 +39,7 @@ export default function RootLayout({
           size="sm"
           variant={pathname === "/admin/usuarios/seguridad" ? "primary" : "secondary"}
         >
-          Seguridad
+          Guardia
         </Button1>
         <Button1
           href="/admin/usuarios/otros"
