@@ -56,9 +56,7 @@ export default function Home() {
       </h1>
 
       <div className="flex space-x-4 mb-6">
-        <Button2 href="/admin/cobros/multas/crear" size="md" variant="create">
-          Añadir Multa
-        </Button2>
+        
         <Button2
           href="/admin/cobros/multas/tipo_multa"
           size="md"
