@@ -27,13 +27,7 @@ export default function RootLayout({
         >
           Multas
         </Button1>
-        <Button1
-          href="/admin/cobros/servicios_basicos"
-          size="sm"
-          variant={pathname === "/admin/cobros/servicios_basicos" ? "primary" : "secondary"}
-        >
-          Servicios Basicos
-        </Button1>
+       
       </div>
 
       {/* El contenido de la página (children) se renderiza aquí */}

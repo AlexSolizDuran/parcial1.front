@@ -50,7 +50,7 @@ export default function Sidebar({ variant = "admin" }: SidebarProps) {
     { name: "Usuarios", href: "/admin/usuarios/usuarios", icon: <UsersIcon /> }, // varios usuarios
     { name: "Residencias", href: "/admin/residencias/viviendas", icon: <HomeIcon /> },
     { name: "Cobros", href: "/admin/cobros/expensas", icon: <CreditCardIcon /> },
-    { name: "Incidencias", href: "/admin/incidencia", icon: <BellIcon /> }, // alertas/incidencias
+    //{ name: "Incidencias", href: "/admin/incidencia", icon: <BellIcon /> }, // alertas/incidencias
     
   ];
  

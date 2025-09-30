@@ -5,7 +5,7 @@ import useSWR from 'swr';
 import { apiFetcher } from '@/fetcher';
 import { PaginatedResponse } from '@/types/paginacion/paginacion';
 import { ExpensaSet, TipoExpensaGet } from '@/types/pagos/expensa';
-
+  
 
 
 const CreateExpensaPage: React.FC = () => {
