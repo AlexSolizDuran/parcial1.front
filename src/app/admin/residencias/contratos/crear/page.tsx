@@ -6,117 +6,96 @@ import { apiFetcher } from '@/fetcher';
 import { Inquilino } from '@/types/usuarios/inquilino';
 import { ViviendaGet } from '@/types/residencias/vivienda';
 import { PaginatedResponse } from '@/types/paginacion/paginacion';
+import { ContratoSet } from '@/types/residencias/contrato';
+import { Persona } from '@/types/usuarios/usuarios';
 
-/**
- * Interfaz para definir la estructura de los datos del contrato de vivienda.
- */
-interface ContractData {
-  tenantId: string;
-  propertyId: string;
-  startDate: string;
-  endDate: string;
-  amount: number | string;
-  occupants: string[];
-  terms: string;
+
+interface ContratoFormData extends ContratoSet {
+  ocupantes: string[]; // Array de CIs de los ocupantes
 }
 
-/**
- * Vista para crear un nuevo contrato de alquiler de vivienda.
- * Contiene un formulario para ingresar los detalles del contrato,
- * seleccionar inquilino, vivienda y añadir ocupantes.
- */
-const CreateContractPage: React.FC = () => {
+
+const CreateContratoPage: React.FC = () => {
   const url = process.env.NEXT_PUBLIC_API_URL;
+  const contratoUrl = process.env.NEXT_PUBLIC_API_URL + '/residencias/contrato/';
   const router = useRouter();
 
-  // Carga de datos desde la API
-  const { data: tenantsData } = useSWR<PaginatedResponse<Inquilino>>(`${url}/residencias/inquilino/`, apiFetcher);
-  const { data: propertiesData } = useSWR<PaginatedResponse<ViviendaGet>>(`${url}/residencias/vivienda/`, apiFetcher);
+ 
+  const { data: inquilinosData } = useSWR<PaginatedResponse<Inquilino>>(`${url}/residencias/inquilino/`, apiFetcher);
+  const { data: viviendasData } = useSWR<PaginatedResponse<ViviendaGet>>(`${url}/residencias/vivienda/`, apiFetcher);
+  const { data: personasData } = useSWR<PaginatedResponse<Persona>>(`${url}/usuario/personas/`, apiFetcher);
 
-  const [contract, setContract] = useState<ContractData>({
-    tenantId: '',
-    propertyId: '',
-    startDate: '',
-    endDate: '',
-    amount: '',
-    occupants: [],
-    terms: '',
+  const [contrato, setContrato] = useState<ContratoFormData>({
+    inquilino: '',
+    vivienda: '',
+    fecha_ingreso: '',
+    fecha_salida: '',
+    porcentaje_expensa: '',
+    tipo_renta:'',
+    descripcion: '',
+    ocupantes: [],
   });
 
-  // Estado para el campo de texto del nuevo ocupante
-  const [currentOccupant, setCurrentOccupant] = useState('');
+  // Estado para el ocupante seleccionado en el dropdown
+  const [ocupanteSeleccionado, setOcupanteSeleccionado] = useState('');
   // Estado para la carga y errores del formulario
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  /**
-   * Maneja los cambios en los campos del formulario y actualiza el estado.
-   * @param e Evento de cambio del input o textarea.
-   */
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => { 
     const { name, value } = e.target;
-    setContract((prevContract) => ({
-      ...prevContract,
+    setContrato((prevcontrato) => ({
+      ...prevcontrato,
       [name]: value,
     }));
   };
 
-  /**
-   * Añade un nuevo ocupante a la lista de ocupantes del contrato.
-   */
-  const handleAddOccupant = () => {
-    if (currentOccupant.trim() !== '') {
-      setContract((prev) => ({
+  const handleAnadirOcupante = () => {
+    if (ocupanteSeleccionado && !contrato.ocupantes.includes(ocupanteSeleccionado)) {
+      setContrato(prev => ({
         ...prev,
-        occupants: [...prev.occupants, currentOccupant.trim()],
+        ocupantes: [...prev.ocupantes, ocupanteSeleccionado]
       }));
-      setCurrentOccupant(''); // Limpiar el input
+      setOcupanteSeleccionado(''); // Reset dropdown
     }
   };
 
-  /**
-   * Elimina un ocupante de la lista por su índice.
-   * @param indexToRemove El índice del ocupante a eliminar.
-   */
-  const handleRemoveOccupant = (indexToRemove: number) => {
-    setContract((prev) => ({
+  const handleEliminarOcupante = (ciToRemove: string) => {
+    setContrato(prev => ({
       ...prev,
-      occupants: prev.occupants.filter((_, index) => index !== indexToRemove),
+      ocupantes: prev.ocupantes.filter(ci => ci !== ciToRemove)
     }));
   };
 
-  /**
-   * Maneja el envío del formulario.
-   * Por ahora, solo muestra los datos en la consola.
-   * @param e Evento de envío del formulario.
-   */
+  
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
 
-    try {
-      // Usando apiFetcher para la solicitud POST
-      await apiFetcher(`${url}/residencias/contrato/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          inquilino: contract.tenantId,
-          vivienda: contract.propertyId,
-          fecha_ingreso: contract.startDate,
-          fecha_salida: contract.endDate,
-          porcentaje_expensa: Number(contract.amount),
-          tipo_renta: 'Alquiler',
-          descripcion: contract.terms,
-        }),
-      });
+    // Prepara el payload para la API, incluyendo los ocupantes
+    const payload = {
+      inquilino: contrato.inquilino,
+      vivienda: contrato.vivienda,
+      fecha_ingreso: contrato.fecha_ingreso,
+      fecha_salida: contrato.fecha_salida,
+      porcentaje_expensa: contrato.porcentaje_expensa,
+      tipo_renta: contrato.tipo_renta,
+      descripcion: contrato.descripcion,
+      ocupantes_ci: contrato.ocupantes, // Asumiendo que el backend espera este campo
+    };
 
+    try {
+      await apiFetcher(contratoUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      
       alert('Contrato creado exitosamente');
-      router.push('/admin/residencias/contratos'); // Redirigir a la lista de contratos
+      router.push('/admin/residencias/contratos/'); 
     } catch (err: any) {
       setError(err.message);
       console.error('Error en el envío del contrato:', err);
@@ -140,101 +119,120 @@ const CreateContractPage: React.FC = () => {
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <SelectField
-            label="Inquilino"
-            name="tenantId"
-            value={contract.tenantId}
+            label="Seleccionar Inquilino"
+            name="inquilino"
+            value={contrato.inquilino}
             onChange={handleChange}
             required
           >
             <option value="" disabled>Selecciona un inquilino</option>
-            {tenantsData?.results.map(tenant => (
-              <option key={tenant.id} value={tenant.usuario_detail?.id}>
-                {tenant.usuario_detail?.persona.nombre} {tenant.usuario_detail?.persona.apellido}
+            {inquilinosData?.results.map(inquilino => (
+              <option key={inquilino.id} value={inquilino.id}>
+                {inquilino.usuario_detail?.persona.nombre} {inquilino.usuario_detail?.persona.apellido}
               </option>
             ))}
           </SelectField>
 
           <SelectField
-            label="Vivienda"
-            name="propertyId"
-            value={contract.propertyId}
+            label="Seleccionar Vivienda"
+            name="vivienda"
+            value={contrato.vivienda}
             onChange={handleChange}
             required
           >
             <option value="" disabled>Selecciona una vivienda</option>
-            {propertiesData?.results.map(prop => (
-              <option key={prop.id} value={prop.id}>Vivienda Nro. {prop.nro_vivienda}</option>
+            {viviendasData?.results.map(vivienda => (
+              <option key={vivienda.id} value={vivienda.id}>Vivienda Nro. {vivienda.nro_vivienda}</option>
             ))}
           </SelectField>
 
           <InputField
-            label="Fecha de Inicio"
-            name="startDate"
+            label="Fecha de Inicio del Contrato"
+            name="fecha_ingreso"
             type="date"
-            value={contract.startDate}
+            value={contrato.fecha_ingreso}
             onChange={handleChange}
             required
           />
 
           <InputField
-            label="Fecha de Finalización"
-            name="endDate"
+            label="Fecha de Finalización del Contrato"
+            name="fecha_salida"
             type="date"
-            value={contract.endDate}
+            value={contrato.fecha_salida}
             onChange={handleChange}
             required
           />
 
           <InputField
             label="Porcentaje Expensa (%)"
-            name="amount"
+            name="porcentaje_expensa"
             type="number"
-            value={String(contract.amount)}
+            value={String(contrato.porcentaje_expensa)}
             onChange={handleChange}
             placeholder="Ej: 5"
             required
           />
+          <SelectField
+            label="Seleccionar Tipo de Renta"
+            name="tipo_renta"
+            value={contrato.tipo_renta}
+            onChange={handleChange}
+            required
+          >
+            <option value="" disabled>Selecciona un Tipo de Renta</option>
+              <option value="anticretico" >Anticrético</option>
+              <option value="alquiler" >Alquiler</option>
+          </SelectField>
         </div>
 
         <TextareaField
-          label="Términos y Condiciones (Descripción)"
-          name="terms"
-          value={contract.terms}
+          label="Descripción del Contrato (Términos y Condiciones)"
+          name="descripcion"
+          value={contrato.descripcion}
           onChange={handleChange}
           placeholder="Detalles del contrato, cláusulas, etc."
         />
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Ocupantes Adicionales</label>
-          <div className="flex gap-2">
-            <input
-              type="text"
-              value={currentOccupant}
-              onChange={(e) => setCurrentOccupant(e.target.value)}
-              placeholder="Nombre del ocupante"
-              className="flex-grow p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-            />
+          <div className="flex gap-2 items-center">
+            <select
+              value={ocupanteSeleccionado}
+              onChange={(e) => setOcupanteSeleccionado(e.target.value)}
+              className="flex-grow w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-150"
+            >
+              <option value="" disabled>Selecciona una persona</option>
+              {personasData?.results.map(persona => (
+                <option key={persona.id} value={persona.ci}>
+                  {persona.nombre} {persona.apellido} (CI: {persona.ci})
+                </option>
+              ))}
+            </select>
             <button
               type="button"
-              onClick={handleAddOccupant}
-              className="px-4 py-2 bg-green-600 text-white font-semibold rounded-md hover:bg-green-700 transition"
+              onClick={handleAnadirOcupante}
+              className="px-4 py-2 bg-green-600 text-white font-semibold rounded-md hover:bg-green-700 transition duration-150"
             >
               Añadir
             </button>
           </div>
           <ul className="mt-3 space-y-2">
-            {contract.occupants.map((occupant, index) => (
-              <li key={index} className="flex justify-between items-center bg-gray-50 p-2 rounded-md border">
-                <span>{occupant}</span>
-                <button
-                  type="button"
-                  onClick={() => handleRemoveOccupant(index)}
-                  className="px-2 py-1 text-xs bg-red-500 text-white rounded hover:bg-red-600"
-                >
-                  Eliminar
-                </button>
-              </li>
-            ))}
+            {contrato.ocupantes.map((ci) => {
+              const persona = personasData?.results.find(p => p.ci === ci);
+              return (
+                <li key={ci} className="flex justify-between items-center bg-gray-50 p-2 rounded-md border">
+                  <span>{persona ? `${persona.nombre} ${persona.apellido}` : `CI: ${ci}`}</span>
+                  <button
+                    type="button"
+                    onClick={() => handleEliminarOcupante(ci)}
+                    className="px-2 py-1 text-xs bg-red-500 text-white rounded hover:bg-red-600 transition duration-150"
+                  >
+                    Eliminar
+                  </button>
+                </li>
+              );
+            })}
           </ul>
         </div>
 
@@ -257,20 +255,20 @@ const CreateContractPage: React.FC = () => {
 
 // --- Componentes de Ayuda para el Formulario ---
 
-interface FieldProps {
+interface Fieldviviendas {
   label: string;
   name: string;
   required?: boolean;
 }
 
-interface InputFieldProps extends FieldProps {
+interface InputFieldviviendas extends Fieldviviendas {
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   type: string;
   placeholder?: string;
 }
 
-const InputField: React.FC<InputFieldProps> = ({ label, name, value, onChange, type, placeholder, required }) => (
+const InputField: React.FC<InputFieldviviendas> = ({ label, name, value, onChange, type, placeholder, required }) => (
   <div>
     <label htmlFor={name} className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
     <input id={name} name={name} type={type} value={value} onChange={onChange} placeholder={placeholder} required={required}
@@ -278,13 +276,13 @@ const InputField: React.FC<InputFieldProps> = ({ label, name, value, onChange, t
   </div>
 );
 
-interface SelectFieldProps extends FieldProps {
+interface SelectFieldviviendas extends Fieldviviendas {
   value: string;
   onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   children: React.ReactNode;
 }
 
-const SelectField: React.FC<SelectFieldProps> = ({ label, name, value, onChange, required, children }) => (
+const SelectField: React.FC<SelectFieldviviendas> = ({ label, name, value, onChange, required, children }) => (
   <div>
     <label htmlFor={name} className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
     <select id={name} name={name} value={value} onChange={onChange} required={required}
@@ -294,13 +292,13 @@ const SelectField: React.FC<SelectFieldProps> = ({ label, name, value, onChange,
   </div>
 );
 
-interface TextareaFieldProps extends FieldProps {
+interface TextareaFieldviviendas extends Fieldviviendas {
   value: string;
   onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   placeholder?: string;
 }
 
-const TextareaField: React.FC<TextareaFieldProps> = ({ label, name, value, onChange, placeholder, required }) => (
+const TextareaField: React.FC<TextareaFieldviviendas> = ({ label, name, value, onChange, placeholder, required }) => (
   <div>
     <label htmlFor={name} className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
     <textarea id={name} name={name} value={value} onChange={onChange} placeholder={placeholder} required={required} rows={4}
@@ -308,4 +306,4 @@ const TextareaField: React.FC<TextareaFieldProps> = ({ label, name, value, onCha
   </div>
 );
 
-export default CreateContractPage;
+export default CreateContratoPage;

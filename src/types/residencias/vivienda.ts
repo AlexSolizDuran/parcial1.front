@@ -14,7 +14,7 @@ interface ViviendaSet {
     precio_alquiler :string,
     precio_anticretico: string,
     superficie:string,
-    
+    estado:boolean,
     foto? : string,
 }
 

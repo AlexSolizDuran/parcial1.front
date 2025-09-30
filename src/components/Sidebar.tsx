@@ -47,12 +47,11 @@ export default function Sidebar({ variant = "admin" }: SidebarProps) {
     router.push("/");
   };
   const adminItems = [
-    { name: "Inicio", href: "/admin", icon: <HomeIcon /> },
     { name: "Usuarios", href: "/admin/usuarios/usuarios", icon: <UsersIcon /> }, // varios usuarios
     { name: "Residencias", href: "/admin/residencias/viviendas", icon: <HomeIcon /> },
-    { name: "Activos y Reservas", href: "/admin/activos_reservas", icon: <CalendarIcon /> }, // calendario o reservas
+    { name: "Cobros", href: "/admin/cobros/expensas", icon: <CreditCardIcon /> },
     { name: "Incidencias", href: "/admin/incidencia", icon: <BellIcon /> }, // alertas/incidencias
-    { name: "Facturación y Cobros", href: "/admin/factura_cobro", icon: <CreditCardIcon /> },
+    
   ];
  
   

@@ -37,13 +37,10 @@ export default function LoginPage() {
         roles: data.roles,
       };
 
-      localStorage.setItem("token", data.access);
-      localStorage.setItem("user", JSON.stringify(user));
-
       if (data.roles.includes("admin")) {
-        router.push("/admin");
-      } else {
-        router.push("/propietario");
+        localStorage.setItem("token", data.access);
+        localStorage.setItem("user", JSON.stringify(user));
+        router.push("/admin/usuarios/usuarios");
       }
     } catch (err: any) {
       console.error(err);
