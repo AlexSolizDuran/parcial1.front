@@ -26,6 +26,7 @@ export default function EditHome({ params }: { params: Promise<{ id: string }> }
         precio_alquiler: "",
         precio_anticretico: "",
         superficie: "",
+        estado: false,
         
     });
 
@@ -37,7 +38,7 @@ export default function EditHome({ params }: { params: Promise<{ id: string }> }
                 precio_alquiler: initialData.precio_alquiler,
                 precio_anticretico: initialData.precio_anticretico,
                 superficie: initialData.superficie, // Mapeamos 'superficie' del GET a 'superfice' del formulario
-                
+                estado: initialData.estado,
             });
         }
     }, [initialData]);
