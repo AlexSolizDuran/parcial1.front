@@ -9,9 +9,9 @@ import { useState } from "react";
 import useSWR from "swr";
 
 export default function home(){
-    const url = process.env.NEXT_PUBLIC_API_URL;
-    const contratoUrl = `${url}/residencias/contrato`
     const [page,setPage] = useState(1);
+    const contratoUrl = `/api/residencias/contrato/`
+
     const {data:contratos,isLoading,error} = useSWR<PaginatedResponse<ContratoGet>>(contratoUrl,apiFetcher)
     console.log(contratos?.results)
     return (

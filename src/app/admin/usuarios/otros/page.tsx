@@ -15,11 +15,11 @@ interface PaginatedResponse<Persona> {
 }
 
 export default function PersonasListView() {
-  const url = process.env.NEXT_PUBLIC_API_URL;
+  
   const [page, setPage] = useState(1);
-
+  const url = `/api/usuari/persona/?page=${page}`;
   const { data, error, isLoading } = useSWR<PaginatedResponse<Persona>>(
-    `${url}/usuario/personas/?page=${page}`,
+    url,
     apiFetcher
   );
   if (error) {

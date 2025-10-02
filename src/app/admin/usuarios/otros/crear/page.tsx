@@ -10,7 +10,7 @@ import FormSelect from "@/components/input/FormSelect";
 
 export default function PersonaCreateView() {
   const router = useRouter();
-  const url = process.env.NEXT_PUBLIC_API_URL + "/usuario/personas/";
+  const url = `/api/usuari/persona/`;
 
   const [formData, setFormData] = useState<Persona>({
     nombre: "",
@@ -58,9 +58,7 @@ export default function PersonaCreateView() {
         method: "POST",
         body: dataToSend,
       });
-
-      mutate(url); // refresca la cache de SWR
-      
+      mutate(url); 
       router.push("/admin/usuarios/otros?created=true");
     } catch (err: any) {
       console.error(err);

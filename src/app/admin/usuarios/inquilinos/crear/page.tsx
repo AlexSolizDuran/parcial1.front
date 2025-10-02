@@ -11,7 +11,7 @@ import { Inquilino } from "@/types/usuarios/inquilino";
 
 export default function PersonaCreateView() {
     const router = useRouter();
-    const url = process.env.NEXT_PUBLIC_API_URL + "/residencias/inquilino/";
+    const url = `/api/usuari/inquilino/`;
 
     const [personaData, setPersonaData] = useState<Persona>({
         nombre: "",

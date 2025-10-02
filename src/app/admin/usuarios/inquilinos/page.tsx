@@ -17,11 +17,11 @@ interface PaginatedResponse<Inquilino> {
 
 
 export default function ListaUsuarios() {
-  const url = process.env.NEXT_PUBLIC_API_URL;
   const [page, setPage] = useState(1)
+  const url = `/api/usuari/inquilino/?page=${page}`;
 
   const { data:inquilino, error, isLoading } = useSWR<PaginatedResponse<Inquilino>>(
-    `${url}/residencias/inquilino/?page=${page}`,
+    url,
     apiFetcher
   );
   

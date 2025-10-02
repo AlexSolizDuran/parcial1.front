@@ -11,17 +11,16 @@ import { Propietario } from "@/types/usuarios/propietario";
 // Iconos para la información
 
 export default function PropietarioDetail({ params }: { params: Promise<{ id: string }> }) {
-    const url = process.env.NEXT_PUBLIC_API_URL;
     const router = useRouter();
     const { id } = use(params);
-    const propietarioUrl = `${url}/residencias/propietario/${id}/`;
-    const listUrl = `${url}/residencias/propietario/`;
+    const propietarioUrl = `/api/usuari/propietario/${id}/`;
+    const listUrl = `/api/usuari/propietario/`;
 
     const [isDeleting, setIsDeleting] = useState(false);
     const [deleteError, setDeleteError] = useState<string | null>(null);
-
+    const shouldFetch = !isDeleting;
     const { data: propietario, error, isLoading } = useSWR<Propietario>(
-        propietarioUrl,
+        shouldFetch ? propietarioUrl : null,
         apiFetcher
     );
 

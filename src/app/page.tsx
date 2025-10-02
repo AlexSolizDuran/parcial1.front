@@ -38,7 +38,6 @@ export default function LoginPage() {
       };
 
       if (data.roles.includes("admin")) {
-        localStorage.setItem("token", data.access);
         localStorage.setItem("user", JSON.stringify(user));
         router.push("/admin/usuarios/usuarios");
       }

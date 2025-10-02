@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 
 export async function POST(request: Request) {
-  const url = process.env.NEXT_PUBLIC_API_URL;
+  const url = process.env.API_URL;
   try {
     const { username, password } = await request.json();
 
@@ -13,6 +13,8 @@ export async function POST(request: Request) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
+        credentials: "include", // 👈 Importante para pasar cookies
+
       }
     );
 
@@ -46,15 +48,10 @@ export async function POST(request: Request) {
       email: data.email,
       access: token
     });
-    response.cookies.set({
-      name: "sessionToken",
-      value: token,
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      path: "/",
-      maxAge: 60 * 60 * 24, // 1 día de expiración
-    });
+    const cookies = backendResponse.headers.get("set-cookie");
+    if (cookies) {
+      response.headers.set("set-cookie", cookies);
+    }
 
     return response;
   } catch (error) {

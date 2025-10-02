@@ -10,8 +10,7 @@ import { mutate } from "swr";
 
 export default function Home() {
     const router = useRouter()
-    const url = process.env.NEXT_PUBLIC_API_URL
-    const viviendaUrl = `${url}/residencias/vivienda/`
+    const viviendaUrl = `/api/residencias/vivienda/`
 
     const [fotoFile, setFotoFile] = useState<File | null>(null);
     const [error, setError] = useState<string>("");

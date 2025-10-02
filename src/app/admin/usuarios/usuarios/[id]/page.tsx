@@ -14,8 +14,8 @@ export default function UsuarioDetail({ params }: { params: Promise<{ id: string
     const url = process.env.NEXT_PUBLIC_API_URL;
     const router = useRouter();
     const { id } = use(params);
-    const usuarioUrl = `${url}/usuario/usuarios/${id}/`;
-    const listUrl = `${url}/usuario/usuarios/`;
+    const usuarioUrl = `/api/usuari/usuario/${id}/`;
+    const listUrl = `/api/usuari/usuario/`;
 
     const [isDeleting, setIsDeleting] = useState(false);
     const [deleteError, setDeleteError] = useState<string | null>(null);

@@ -8,9 +8,8 @@ import { useState } from "react";
 import useSWR from "swr";
 
 export default function home() {
-  const url = process.env.NEXT_PUBLIC_API_URL;
   const [page, setPage] = useState(1)
-  const viviendasUrl = `${url}/residencias/vivienda/?page=${page}`
+  const viviendasUrl = `/api/residencias/vivienda/?page=${page}`
 
   const { data: viviendas, isLoading, error } = useSWR<PaginatedResponse<ViviendaGet>>(viviendasUrl, apiFetcher)
   if (isLoading) return <div>Cargando viviendas...</div>;

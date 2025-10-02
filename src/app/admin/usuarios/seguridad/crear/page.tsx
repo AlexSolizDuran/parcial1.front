@@ -11,7 +11,7 @@ import { Seguridad } from "@/types/usuarios/seguridad";
 
 export default function PersonaCreateView() {
     const router = useRouter();
-    const url = process.env.NEXT_PUBLIC_API_URL + "/acceso_registro/seguridad/";
+    const url = `/api/usuari/seguridad/`;
 
     const [personaData, setPersonaData] = useState<Persona>({
         nombre: "",

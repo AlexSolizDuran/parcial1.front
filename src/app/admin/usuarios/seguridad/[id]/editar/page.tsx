@@ -14,8 +14,8 @@ import { Usuario } from "@/types/usuarios/usuarios";
 export default function InquilinoEdit() {
   const params = useParams();
   const usuarioId = params?.id as string;
-  const url = process.env.NEXT_PUBLIC_API_URL;
-  const usuarioUrl = `${url}/usuario/usuarios/${usuarioId}/`;
+  
+  const usuarioUrl = `/api/usuari/usuario/${usuarioId}/`;
 
   // SWR para obtener usuario (y su personaId)
   const { data: usuario, error, isLoading } = useSWR<Usuario>(usuarioUrl, apiFetcher);

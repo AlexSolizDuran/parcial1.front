@@ -11,9 +11,8 @@ import { Suspense, useState } from "react";
 import useSWR from "swr";
 
 export default function home() {
-    const url = process.env.NEXT_PUBLIC_API_URL;
     const [page, setPage] = useState(1)
-    const seguridadUrl = `${url}/acceso_registro/seguridad/`
+    const seguridadUrl = `/api/usuari/seguridad/?page=${page}`
 
     const { data: seguridad, error, isLoading } = useSWR<PaginatedResponse<SeguridadGet>>(seguridadUrl, apiFetcher)
 

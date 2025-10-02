@@ -10,9 +10,10 @@ import { ViviendaGet, ViviendaSet } from "@/types/residencias/vivienda";
 
 export default function EditHome({ params }: { params: Promise<{ id: string }> }) {
     const router = useRouter();
-    const url = process.env.NEXT_PUBLIC_API_URL;
     const { id } = use(params);
-    const viviendaUrl = `${url}/residencias/vivienda/${id}/`; // URL específica de la vivienda
+    const viviendaUrl = `/api/residencias/vivienda/${id}/`; // URL específica de la vivienda
+    const listUrl = `/api/residencias/vivienda/`; // URL de la lista de viviendas
+
 
     // 1. Cargar datos existentes con SWR
     const { data: initialData, error: fetchError, isLoading: isFetching } = useSWR<ViviendaGet>(viviendaUrl, apiFetcher);
@@ -117,7 +118,7 @@ export default function EditHome({ params }: { params: Promise<{ id: string }> }
 
             // Invalidar el caché de SWR para la URL de la vivienda y la lista general
             mutate(viviendaUrl);
-            mutate(`${url}/residencias/vivienda/`); // Asume que esta es la URL de la lista
+            mutate(listUrl); // Asume que esta es la URL de la lista
 
             router.push(`/admin/residencias/viviendas/${id}?updated=true`); // Redirigir a la vista de detalles
         } catch (err: any) {

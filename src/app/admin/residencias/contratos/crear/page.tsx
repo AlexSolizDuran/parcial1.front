@@ -16,14 +16,13 @@ interface ContratoFormData extends ContratoSet {
 
 
 const CreateContratoPage: React.FC = () => {
-  const url = process.env.NEXT_PUBLIC_API_URL;
-  const contratoUrl = process.env.NEXT_PUBLIC_API_URL + '/residencias/contrato/';
+  const contratoUrl = '/api/residencias/contrato/';
   const router = useRouter();
 
  
-  const { data: inquilinosData } = useSWR<PaginatedResponse<Inquilino>>(`${url}/residencias/inquilino/`, apiFetcher);
-  const { data: viviendasData } = useSWR<PaginatedResponse<ViviendaGet>>(`${url}/residencias/vivienda/`, apiFetcher);
-  const { data: personasData } = useSWR<PaginatedResponse<Persona>>(`${url}/usuario/personas/`, apiFetcher);
+  const { data: inquilinosData } = useSWR<PaginatedResponse<Inquilino>>(`/api/usuari/inquilino/`, apiFetcher);
+  const { data: viviendasData } = useSWR<PaginatedResponse<ViviendaGet>>(`/api/residencias/vivienda/`, apiFetcher);
+  const { data: personasData } = useSWR<PaginatedResponse<Persona>>(`/api/usuari/persona/`, apiFetcher);
 
   const [contrato, setContrato] = useState<ContratoFormData>({
     inquilino: '',
@@ -90,7 +89,6 @@ const CreateContratoPage: React.FC = () => {
     try {
       await apiFetcher(contratoUrl, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
       

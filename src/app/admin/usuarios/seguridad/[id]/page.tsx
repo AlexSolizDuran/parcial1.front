@@ -10,10 +10,10 @@ import { use, useState } from "react";
 import useSWR, { mutate } from "swr";
 
 export default function home({ params }: { params: Promise<{ id: string }> }) {
-    const url = process.env.NEXT_PUBLIC_API_URL;
+    
     const { id } = use(params)
-    const seguridadUrl = `${url}/acceso_registro/seguridad/${id}`
-    const listUrl = `${url}/acceso_registro/seguridad/`
+    const seguridadUrl = `/api/usuari/seguridad/${id}`
+    const listUrl = `/api/usuari/seguridad/`
     const router = useRouter()
 
     const [isDeleting, setIsDeleting] = useState(false);

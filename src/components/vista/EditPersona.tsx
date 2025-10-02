@@ -14,9 +14,9 @@ interface PersonaFormProps {
 
 export default function PersonaForm({ personaId, onSuccess }: PersonaFormProps) {
   const router = useRouter();
-  const url = process.env.NEXT_PUBLIC_API_URL;
-  const personaUrl = `${url}/usuario/personas/${personaId}/`;
-  const listUrl = `${url}/usuario/personas/`;
+  
+  const personaUrl = `/api/usuari/persona/${personaId}/`;
+  const listUrl = `/api/usuari/persona/`;
 
   const { data: persona, error, isLoading } = useSWR<Persona>(personaUrl, apiFetcher);
 

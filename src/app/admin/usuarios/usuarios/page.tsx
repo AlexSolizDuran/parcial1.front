@@ -15,11 +15,12 @@ interface PaginatedResponse<Usuario> {
 
 
 export default function ListaUsuarios() {
-  const url = process.env.NEXT_PUBLIC_API_URL;
+  
   const [page, setPage] = useState(1)
+  const url = `/api/usuario/?page=${page}`
 
   const { data, error, isLoading } = useSWR<PaginatedResponse<Usuario>>(
-    `${url}/usuario/usuarios/?page=${page}`,
+    `/api/usuario/?page=${page}`,
     apiFetcher
   );
 

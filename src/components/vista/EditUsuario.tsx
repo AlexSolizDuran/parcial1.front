@@ -13,9 +13,8 @@ interface UsuarioFormProps {
 
 export default function UsuarioForm({ usuarioId, onSuccess }: UsuarioFormProps) {
   const router = useRouter();
-  const url = process.env.NEXT_PUBLIC_API_URL;
-  const usuarioUrl = `${url}/usuario/usuarios/${usuarioId}/`;
-  const listUrl = `${url}/usuario/usuarios/`;
+  const usuarioUrl = `/api/usuari/usuario/${usuarioId}/`;
+  const listUrl = `/api/usuari/usuario/`;
 
   const { data: usuario, error, isLoading } = useSWR<Usuario>(usuarioUrl, apiFetcher);
 
