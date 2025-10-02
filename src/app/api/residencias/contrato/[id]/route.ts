@@ -1,16 +1,18 @@
 // src/app/api/usuarios/[id]/route.ts
 import { NextRequest, NextResponse } from "next/server";
-
+import { cookies } from 'next/headers'
 export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const token = request.cookies.get("sessionToken")?.value;
+  const cookieStore = await cookies()
+  const token = cookieStore.get("sessionToken")?.value;
+  const { id } = await params
   if (!token)
     return NextResponse.json({ message: "No autorizado" }, { status: 401 });
 
   const res = await fetch(
-    `${process.env.API_URL}/residencias/contrato/${params.id}/`,
+    `${process.env.API_URL}/residencias/contrato/${id}/`,
     {
       method: "GET",
       headers: { Authorization: `Bearer ${token}` },
@@ -25,8 +27,9 @@ export async function GET(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const {id} = await params
   const token = request.cookies.get("sessionToken")?.value;
   if (!token) {
     return NextResponse.json({ message: "No autorizado" }, { status: 401 });
@@ -36,7 +39,7 @@ export async function PATCH(
     const body = await request.formData();
 
     const res = await fetch(
-      `${process.env.API_URL}/residencias/contrato/${params.id}/`,
+      `${process.env.API_URL}/residencias/contrato/${id}/`,
       {
         method: "PATCH",
         headers: {
@@ -59,14 +62,15 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const {id} = await params
   const token = request.cookies.get("sessionToken")?.value;
   if (!token)
     return NextResponse.json({ message: "No autorizado" }, { status: 401 });
 
   const res = await fetch(
-    `${process.env.API_URL}/residencias/contrato/${params.id}/`,
+    `${process.env.API_URL}/residencias/contrato/${id}/`,
     {
       method: "DELETE",
       headers: { Authorization: `Bearer ${token}` },

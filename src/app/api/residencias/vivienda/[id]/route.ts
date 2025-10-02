@@ -3,14 +3,15 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }>}
 ) {
+  const {id} = await params
   const token = request.cookies.get("sessionToken")?.value;
   if (!token)
     return NextResponse.json({ message: "No autorizado" }, { status: 401 });
 
   const res = await fetch(
-    `${process.env.API_URL}/residencias/vivienda/${params.id}/`,
+    `${process.env.API_URL}/residencias/vivienda/${id}/`,
     {
       method: "GET",
       headers: { Authorization: `Bearer ${token}` },
@@ -25,8 +26,9 @@ export async function GET(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+ { params }: { params: Promise<{ id: string }>}
 ) {
+  const {id} = await params
   const token = request.cookies.get("sessionToken")?.value;
   if (!token) {
     return NextResponse.json({ message: "No autorizado" }, { status: 401 });
@@ -36,7 +38,7 @@ export async function PATCH(
     const body = await request.formData();
 
     const res = await fetch(
-      `${process.env.API_URL}/residencias/vivienda/${params.id}/`,
+      `${process.env.API_URL}/residencias/vivienda/${id}/`,
       {
         method: "PATCH",
         headers: {
@@ -59,14 +61,15 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const {id} = await params
   const token = request.cookies.get("sessionToken")?.value;
   if (!token)
     return NextResponse.json({ message: "No autorizado" }, { status: 401 });
 
   const res = await fetch(
-    `${process.env.API_URL}/residencias/vivienda/${params.id}/`,
+    `${process.env.API_URL}/residencias/vivienda/${id}/`,
     {
       method: "DELETE",
       headers: { Authorization: `Bearer ${token}` },

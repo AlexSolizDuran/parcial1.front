@@ -17,10 +17,10 @@ interface PaginatedResponse<Usuario> {
 export default function ListaUsuarios() {
   
   const [page, setPage] = useState(1)
-  const url = `/api/usuario/?page=${page}`
+  const url = `/api/usuari/usuario/?page=${page}`
 
   const { data, error, isLoading } = useSWR<PaginatedResponse<Usuario>>(
-    `/api/usuario/?page=${page}`,
+    url,
     apiFetcher
   );
 

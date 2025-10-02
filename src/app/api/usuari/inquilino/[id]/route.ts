@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest,{ params }: { params: Promise<{ id: string }>}) {
   const token = request.cookies.get("sessionToken")?.value;
+  const { id } = await params
   if (!token) return NextResponse.json({ message: "No autorizado" }, { status: 401 });
 
-  const res = await fetch(`${process.env.API_URL}/residencias/inquilino/${params.id}/`, {
+  const res = await fetch(`${process.env.API_URL}/residencias/inquilino/${id}/`, {
     method: "GET",
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -17,8 +18,9 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }>}
 ) {
+  const {id} = await params
   const token = request.cookies.get("sessionToken")?.value;
   if (!token) {
     return NextResponse.json({ message: "No autorizado" }, { status: 401 });
@@ -28,7 +30,7 @@ export async function PATCH(
     const formData = await request.formData();
 
     const res = await fetch(
-      `${process.env.API_URL}/residencias/inquilino/${params.id}/`,
+      `${process.env.API_URL}/residencias/inquilino/${id}/`,
       {
         method: "PATCH",
         headers: {
@@ -49,13 +51,15 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }>}
 ) {
+
+  const {id} = await params
   const token = request.cookies.get("sessionToken")?.value;
   if (!token)
     return NextResponse.json({ message: "No autorizado" }, { status: 401 });
 
-  const res = await fetch(`${process.env.API_URL}/residencias/inquilino/${params.id}/`, {
+  const res = await fetch(`${process.env.API_URL}/residencias/inquilino/${id}/`, {
     method: "DELETE",
     headers: { Authorization: `Bearer ${token}` },
   });

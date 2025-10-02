@@ -1,24 +1,31 @@
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   const token = request.cookies.get("sessionToken")?.value;
-  if (!token) return NextResponse.json({ message: "No autorizado" }, { status: 401 });
+  const { id } = await params;
+  if (!token)
+    return NextResponse.json({ message: "No autorizado" }, { status: 401 });
 
-  const res = await fetch(`${process.env.API_URL}/acceso_registro/seguridad/${params.id}/`, {
-    method: "GET",
-    headers: { Authorization: `Bearer ${token}` },
-  });
+  const res = await fetch(
+    `${process.env.API_URL}/acceso_registro/seguridad/${id}/`,
+    {
+      method: "GET",
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
 
   const data = await res.json();
   return NextResponse.json(data, { status: res.status });
 }
 
-
-
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   const token = request.cookies.get("sessionToken")?.value;
   if (!token) {
     return NextResponse.json({ message: "No autorizado" }, { status: 401 });
@@ -28,7 +35,7 @@ export async function PATCH(
     const formData = await request.formData();
 
     const res = await fetch(
-      `${process.env.API_URL}/acceso_registro/seguridad/${params.id}/`,
+      `${process.env.API_URL}/acceso_registro/seguridad/${id}/`,
       {
         method: "PATCH",
         headers: {
@@ -42,23 +49,29 @@ export async function PATCH(
     return NextResponse.json(data, { status: res.status });
   } catch (error: any) {
     console.error("Error en PATCH /api/personas/[id]:", error);
-    return NextResponse.json({ message: "Error interno del servidor" }, { status: 500 });
+    return NextResponse.json(
+      { message: "Error interno del servidor" },
+      { status: 500 }
+    );
   }
 }
 
-
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   const token = request.cookies.get("sessionToken")?.value;
   if (!token)
     return NextResponse.json({ message: "No autorizado" }, { status: 401 });
 
-  const res = await fetch(`${process.env.API_URL}/acceso_registro/seguridad/${params.id}/`, {
-    method: "DELETE",
-    headers: { Authorization: `Bearer ${token}` },
-  });
+  const res = await fetch(
+    `${process.env.API_URL}/acceso_registro/seguridad/${id}/`,
+    {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
 
   // DELETE puede devolver 204 (sin body)
   if (res.status === 204) {
@@ -78,4 +91,3 @@ export async function DELETE(
 
   return NextResponse.json(data, { status: res.status });
 }
-

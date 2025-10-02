@@ -1,11 +1,16 @@
 // src/app/api/usuarios/[id]/route.ts
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
   const token = request.cookies.get("sessionToken")?.value;
-  if (!token) return NextResponse.json({ message: "No autorizado" }, { status: 401 });
+  if (!token)
+    return NextResponse.json({ message: "No autorizado" }, { status: 401 });
 
-  const res = await fetch(`${process.env.API_URL}/usuario/usuarios/${params.id}/`, {
+  const res = await fetch(`${process.env.API_URL}/usuario/usuarios/${id}/`, {
     method: "GET",
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -16,11 +21,11 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 
 // src/app/api/usuarios/[id]/route.ts
 
-
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const {id} = await params
   const token = request.cookies.get("sessionToken")?.value;
   if (!token) {
     return NextResponse.json({ message: "No autorizado" }, { status: 401 });
@@ -30,7 +35,7 @@ export async function PATCH(
     const body = await request.formData();
 
     const res = await fetch(
-      `${process.env.API_URL}/usuario/usuarios/${params.id}/`,
+      `${process.env.API_URL}/usuario/usuarios/${id}/`,
       {
         method: "PATCH",
         headers: {
@@ -44,19 +49,29 @@ export async function PATCH(
     return NextResponse.json(data, { status: res.status });
   } catch (error: any) {
     console.error("Error en PATCH /api/usuarios/[id]:", error);
-    return NextResponse.json({ message: "Error interno del servidor" }, { status: 500 });
+    return NextResponse.json(
+      { message: "Error interno del servidor" },
+      { status: 500 }
+    );
   }
 }
 
-
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const {id} = await params
   const token = request.cookies.get("sessionToken")?.value;
-  if (!token) return NextResponse.json({ message: "No autorizado" }, { status: 401 });
+  if (!token)
+    return NextResponse.json({ message: "No autorizado" }, { status: 401 });
 
-  const res = await fetch(`${process.env.API_URL}/usuario/usuarios/${params.id}/`, {
-    method: "DELETE",
-    headers: { Authorization: `Bearer ${token}` },
-  });
+  const res = await fetch(
+    `${process.env.API_URL}/usuario/usuarios/${id}/`,
+    {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
 
   // DELETE a veces no devuelve JSON, cuidamos eso:
   let data = {};
